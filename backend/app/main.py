@@ -1,10 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from route import router
 # from database import engine
-from . import user
 
 app = FastAPI()
-app.include_router(user.router)
 origins = [
     'http://localhost:3000',
     "http://localhost"
@@ -17,8 +16,7 @@ app.add_middleware(
     allow_headers = ["*"],
 )
 
-# models.Base.metadata.create_all(bind=engine)
-
-@app.get("/")
-async def root():
-    return {"message": "Hello Router"}
+app.include_router(router)
+# @app.get("/")
+# async def root():
+#     return {"message": "Hello Router"}
