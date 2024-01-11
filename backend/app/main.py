@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from route import router
+from users import router as users_router
 # from database import engine
 
 app = FastAPI()
@@ -17,6 +18,4 @@ app.add_middleware(
 )
 
 app.include_router(router)
-# @app.get("/")
-# async def root():
-#     return {"message": "Hello Router"}
+app.include_router(users_router)
