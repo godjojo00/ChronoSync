@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {callApi} from '../utils/axios_client';
 
 const Register = () => {
     const [email, setEmail] = useState('');
@@ -11,21 +12,20 @@ const Register = () => {
     const handleRegister = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('http://localhost:8080/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email, username, password }),
+            const response = await callApi('POST', 'http://localhost:8080/register', {
+                email,
+                username,
+                password,
             });
 
-            if (response.ok) {
+            if (response.status === 201) {
                 navigate('/login'); // 註冊成功後跳轉到登入頁面
             } else {
                 setErrorMessage('Registration failed');
             }
         } catch (error) {
             console.error('Registration error:', error);
+            setErrorMessage(error.response.data.detail || 'Registration failed');
         }
     };
 

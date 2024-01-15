@@ -1,6 +1,6 @@
 from pymongo import MongoClient
-client = MongoClient("mongodb+srv://Joe:910430@cluster.lekeeip.mongodb.net/?retryWrites=true&w=majority")
 
-db = client.todo_db
-
-collection_name = db["todo_collection"]
+uri = "mongodb://localhost:27017/"
+client = MongoClient(uri)
+db = client.chronosync
+collection_name = db["users"]

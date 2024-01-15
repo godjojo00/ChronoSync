@@ -6,7 +6,7 @@ from users import router as users_router
 
 app = FastAPI()
 origins = [
-    'http://localhost:3000',
+    'http://localhost:5173',
     "http://localhost"
 ]
 app.add_middleware(

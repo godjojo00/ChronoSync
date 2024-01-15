@@ -34,20 +34,20 @@ def verify_password(plain_password, hashed_password):
 @router.post("/register")
 async def register_user(user: UserIn):
     # 檢查用戶名是否已存在
-    if await db["users"].find_one({"username": user.username}):
+    if db["users"].find_one({"username": user.username}):
         raise HTTPException(status_code=400, detail="Username already registered")
 
     # 密碼加密並創建用戶
     hashed_password = hash_password(user.password)
     new_user = UserInDB(**user.dict(), hashed_password=hashed_password)
-    await db["users"].insert_one(new_user.dict(exclude={"password"}))
+    db["users"].insert_one(new_user.dict(exclude={"password"}))
 
     return {"msg": "User registered successfully"}
 
 # 用戶登錄
 @router.post("/login")
 async def login_user(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = await db["users"].find_one({"username": form_data.username})
+    user = db["users"].find_one({"username": form_data.username})
     if not user or not verify_password(form_data.password, user["hashed_password"]):
         raise HTTPException(status_code=401, detail="Incorrect username or password")
 
