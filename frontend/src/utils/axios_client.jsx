@@ -6,7 +6,10 @@ export const callApi = async (url, method, data, baseURL = 'http://localhost:800
       method,
       url,
       data,
-      baseURL, // 添加 baseURL 參數
+      baseURL,
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
     return response;
   } catch (error) {

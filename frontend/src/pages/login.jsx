@@ -1,80 +1,84 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Form, Input, Button, message } from 'antd';
+import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { Link, useNavigate } from 'react-router-dom';
+import { callApi } from '../utils/axios_client';
+import { useUser } from '../Usercontext';
 
-const Login = () => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
+const Login_Page = ({ onLogin }) => {
     const navigate = useNavigate();
+    const [username, setUserName] = useState('');
+    const [password, setPassword] = useState('');
+    const { updateUser } = useUser();
 
-    const handleLogin = async (e) => {
-        e.preventDefault();
+    const onFinish = async (values) => {
         try {
-            const response = await fetch('http://localhost:8080/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username, password }),
+            const response = await callApi('/login', 'POST', {
+                username: values.username,
+                password: values.password,
             });
 
-            if (response.ok) {
-                console.log('Logged in successfully');
-                // 登入成功後的處理，例如重定向到主頁面
+            if (response.status === 200) {
+                updateUser(response.data); // 假设登录成功后返回的数据中包含用户信息
+                navigate('/'); // 登录成功后跳转到首页
             } else {
-                setErrorMessage('Invalid username or password');
+                message.error('Login failed');
             }
         } catch (error) {
             console.error('Login error:', error);
-            setErrorMessage('Login failed');
+            message.error('Login failed');
         }
     };
 
+
     return (
-        <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-            <div className="text-4xl font-bold text-green-500 mb-10">Chronosync</div>
-            <div className="bg-white p-8 rounded shadow-md w-full max-w-sm">
-                <form onSubmit={handleLogin}>
-                    <div className="mb-4">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
-                            Username
-                        </label>
-                        <input
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            id="username"
-                            type="text"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
+        <div className="flex justify-center items-center h-screen">
+            <div className="w-full max-w-md">
+                <h1 className="text-3xl font-semibold mb-6 text-center">Login</h1>
+                <Form
+                    name="normal_login"
+                    className="login-form"
+                    initialValues={{ remember: true }}
+                    onFinish={onFinish}
+                >
+                    <Form.Item
+                        name="username"
+                        rules={[{ required: true, message: 'Please input your Username!' }]}
+                    >
+                        <Input
+                            prefix={<UserOutlined className="site-form-item-icon" />}
+                            placeholder="Username"
                         />
-                    </div>
-                    <div className="mb-6">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
-                            Password
-                        </label>
-                        <input
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-                            id="password"
+                    </Form.Item>
+
+                    <Form.Item
+                        name="password"
+                        rules={[{ required: true, message: 'Please input your Password!' }]}
+                    >
+                        <Input
+                            prefix={<LockOutlined className="site-form-item-icon" />}
                             type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="Password"
                         />
-                    </div>
-                    {errorMessage && <p className="text-red-500 text-xs italic">{errorMessage}</p>}
-                    <div className="flex items-center justify-between">
-                        <button
-                            className="bg-green-300 hover:bg-green-600 text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                            type="submit"
+                    </Form.Item>
+
+                    <Form.Item>
+                        <Button
+                            type="primary"
+                            htmlType="submit"
+                            className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                        //   onClick={() => handleLogin()}
                         >
                             Login
-                        </button>
-                    </div>
-                </form>
-                <div className="mt-4 text-center">
-                    <p>Don't have an account? <span className="text-green-500 cursor-pointer" onClick={() => navigate('/register')}>Register</span></p>
-                </div>
+                        </Button>
+                        <div className="mt-4 text-center">
+                            Don't have an Account? <Link to="/register" className="text-blue-600">Sign Up</Link>
+                        </div>
+                    </Form.Item>
+                </Form>
             </div>
         </div>
     );
 };
 
-export default Login;
+export default Login_Page;
