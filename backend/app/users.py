@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from passlib.context import CryptContext
 from pydantic import BaseModel
-from database import db
+from database import db, users_collection
 from bson import ObjectId
 
 # 密碼上下文
@@ -20,7 +20,9 @@ class UserIn(BaseModel):
     password: str
 
 # 用戶路由
-router = APIRouter()
+router = APIRouter(
+    tags=["users"]
+)
 
 # 密碼加密函數
 def hash_password(password):
