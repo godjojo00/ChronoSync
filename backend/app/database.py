@@ -6,3 +6,5 @@ db = client.chronosync
 
 users_collection = db["users"]
 calendar_collection = db["calendar"]
+events_collection = db["events"]
+shares_collection = db["shares"]

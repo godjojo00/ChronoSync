@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import { callApi } from '../utils/axios_client';  // 引入 callApi
 
 const CalendarComponent = () => {
     const [date, setDate] = useState(new Date());
     const [events, setEvents] = useState({});
+    const calendarId = "65a94cfd79e60e18c59d8cac";  // 假设有某个日历 ID
 
     useEffect(() => {
-        // 模擬從後端獲取事件
-        // 請替換成您的 API 調用
-        fetch('http://localhost:8080/calendar/get')
-            .then((response) => response.json())
-            .then((data) => {
-                const formattedEvents = data.reduce((acc, event) => {
+        // 使用 callApi 从后端获取特定日历的事件
+        callApi('GET', `/calendar/events/${calendarId}`)
+            .then((response) => {
+                const formattedEvents = response.data.reduce((acc, event) => {
                     const dateKey = new Date(event.startDate).toDateString();
                     acc[dateKey] = acc[dateKey] ? [...acc[dateKey], event.title] : [event.title];
                     return acc;
@@ -20,11 +20,11 @@ const CalendarComponent = () => {
                 setEvents(formattedEvents);
             })
             .catch((error) => console.error('Error fetching events:', error));
-    }, []);
+    }, [calendarId]);
 
     const onChange = (newDate) => {
         setDate(newDate);
-        // 添加其他日期變更的處理邏輯
+        // 添加其他日期变更的处理逻辑
     };
 
     const tileContent = ({ date, view }) => {
@@ -48,7 +48,6 @@ const CalendarComponent = () => {
                 tileContent={tileContent}
                 tileClassName="tile-day border border-gray-300 rounded p-1 text-black hover:bg-blue-100"
                 className="border-0 text-lg w-full"
-                // Tailwind CSS 樣式
                 style={{ width: '100%', height: 'auto' }}
             />
             <div className="selected-date text-lg font-semibold text-gray-700 mt-4">
