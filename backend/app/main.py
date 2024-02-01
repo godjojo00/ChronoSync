@@ -4,7 +4,6 @@ from route import router
 from users import router as users_router
 from new_calendar import router as calendar_router
 from events import router as events_router
-from shares import router as shares_router
 # from database import engine
 
 app = FastAPI()
@@ -24,4 +23,3 @@ app.include_router(router)
 app.include_router(users_router)
 app.include_router(calendar_router)
 app.include_router(events_router)
-app.include_router(shares_router)
